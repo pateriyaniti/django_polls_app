@@ -11,5 +11,4 @@ def register(request):
             return redirect('polls:index')
     else:
         form = UserCreationForm()
-    return render(request, 'accounts/register.html')
-
+    return render(request, 'accounts/register.html', {'form': form})

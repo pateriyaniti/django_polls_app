@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
+
+import dj_database_url  #type:ignore
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,8 +27,9 @@ SECRET_KEY = 'django-insecure-%*sg%w4!hv860beyc18o#x-0_&19%@()4^&b5e1s&k#ni(p@=7
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+# DEBUG = False
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = ['127.0.0.1'] #should be added if debug is false
 
 
 # Application definition
@@ -39,10 +43,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "polls",
     'accounts',
-    'rest_framework'
+    'rest_framework',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -50,6 +56,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_app.middleware.CustomHeaderMiddleware',
 ]
 
 ROOT_URLCONF = 'django_app.urls'
@@ -83,6 +90,7 @@ DATABASES = {
     }
 }
 
+DATABASES['default'] = dj_database_url.parse('postgresql://django_db_1ps8_user:0WwSKoDFE7FOau4XNJvxpqLm75JCmPcu@dpg-csaa41o8fa8c73cls2t0-a.singapore-postgres.render.com/django_db_1ps8')
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -130,12 +138,16 @@ LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = 'polls:index'
 LOGIN_REDIRECT_URL = 'polls:index'
 
-REST_FRAMEWORK ={
+REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BaicAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
     ],
 }
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]

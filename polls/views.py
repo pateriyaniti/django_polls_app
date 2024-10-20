@@ -5,6 +5,7 @@
 
 #class Base approch
 from django.views import View
+from django.core.paginator import Paginator
 from django.http import HttpResponse, HttpResponseRedirect
 from .models import Question, Choice
 from django.shortcuts import render,redirect,get_object_or_404
@@ -29,9 +30,11 @@ def contact(request):
 
 
 def index(request):
-    latest_question_list = Question.objects.order_by('-pub_date')[:5]
-    context = {'latest_question_list': latest_question_list}
-    return render(request, 'polls/index.html', context)
+    latest_question_list = Question.objects.order_by('-pub_date')
+    paginator =Paginator(latest_question_list, 5)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'polls/index.html', {'page_obj': page_obj})
 
 def detail(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
